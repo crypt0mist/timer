@@ -2,9 +2,14 @@ import { useState, useCallback } from 'react';
 
 // Filter function to remove messages with banned words
 const isBannedMessage = (msg) => {
-  const bannedWords = ['bhai', 'legend', 'kia', 'kya', ' ho ', 'raha', 'gaya', ' aur', ' kar', 'kehdo', 'kehna', 'hain'];
   const lowerMsg = String(msg).toLowerCase();
-  return bannedWords.some(word => lowerMsg.includes(word));
+  // Ban specific problematic phrases and words
+  const bannedPhrases = [
+    'bhai', 'legend', 'kya ho', 'kia kr', 'aur kia', 'kaise ho', 'game khel', 
+    'acha chal', 'shukriya', 'kehdo', 'kehna', 'kya kar', 'kya scene', 
+    'arre beta', 'arre saab', 'ek minute', 'acha babu', 'waah bhai'
+  ];
+  return bannedPhrases.some(phrase => lowerMsg.includes(phrase));
 };
 
 export const useGroq = () => {
@@ -41,20 +46,20 @@ export const useGroq = () => {
                 .filter(msg => !isBannedMessage(msg));
             }
           } else {
-            const fallbackMatches = content.
-                .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
-                .filter(msg => !isBannedMessage(msg
+            const fallbackMatches = content.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/g);
             if (fallbackMatches) {
-              messagesPool = fallbackMatches.map(m => m.replace(/^"|"$/g, '').slice(0, 50));
+              messagesPool = fallbackMatches
+                .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
+                .filter(msg => !isBannedMessage(msg));
             }
           }
         } catch (parseError) {
-              .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
-              .filter(msg => !isBannedMessage(msg
           console.error("Failed to parse JSON, falling back to regex", parseError);
           const fallbackMatches = content.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/g);
           if (fallbackMatches) {
-            messagesPool = fallbackMatches.map(m => m.replace(/^"|"$/g, '').slice(0, 50));
+            messagesPool = fallbackMatches
+              .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
+              .filter(msg => !isBannedMessage(msg));
           }
         }
       } else {
@@ -88,7 +93,6 @@ export const useGroq = () => {
         'machli spicy kar', 'donut finish quick', 'bitcoin pump strong', 'ETH hold long',
         'machli perfect fry', 'donut sugar miss', 'bitcoin chart nice', 'ETH rocket dekha',
         'machli water dal', 'donut hole size', 'crypto hodl power', 'ETH pump power'
-      ];
       ];
       for (let i = messagesPool.length; i < 100; i++) {
         messagesPool.push(fallbackMessages[i % fallbackMessages.length]);
