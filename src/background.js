@@ -1,18 +1,20 @@
 /* global chrome */
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || process.env.GROQ_API_KEY;
-const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate 100 unique, natural messages that feel authentic.
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate 100 UNIQUE messages.
 
-Guidelines:
-- Each message 2-6 words maximum
-- Mix of greetings, casual reactions, questions, and playful banter
-- Topics: machli (fish talk, fishing, seafood), donuts (cravings, eating, sharing), and crypto (coins, trading, gains/losses, market hype)
-- Use natural Roman Urdu (e.g., 'machli kha li?', 'donut chahiye abhi', 'crypto upar gaya', 'ETH khareed lo bhai', 'machli pakad li aaj', 'donut mila nahi', 'bitcoin phir gira')
-- Make them feel like real Discord messages, not robotic
-- Vary tone: some excited (crypto pumping, donut found), some sad (crypto dip, no donuts), some casual (machli talk)
-- NO English translations, NO numbering, NO markdown, NO duplicates
+STRICT RULES:
+- Each message 2-6 words ONLY
+- Topics MUST be ONLY these three: machli (fish/fishing/seafood), donut (cravings/eating), crypto (bitcoin/ETH/trading/gains/loss)
+- DO NOT use: "bhai", "legend", "kia kr rahe", "kya ho raha" — these are BANNED words
+- Every single message must mention machli, donut, OR crypto specifically
+- Roman Urdu only, no generic filler messages
+- NO duplicates, NO similar phrases
 
-Return ONLY a valid JSON array of strings, nothing else.
+BAD examples (do NOT generate): "bhai kia kr raha", "kya ho gaya yaar", "bhai legend"
+GOOD examples: "machli fry kar li", "donut khatam ho gaya", "bitcoin phir gira yaar", "ETH khareed li aaj", "machli bazar se lai", "donut mil gaya bhai", "crypto ne duba diya"
+
+Return ONLY a valid JSON array of 100 strings. Nothing else.
 Example: ["arre machli kha li", "donut chahiye yaar", "crypto upar gaya bhai", "ETH buy kar lo"]`;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

@@ -1,16 +1,20 @@
+/* global process */
+
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
-const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate 100 unique, natural messages that feel authentic.
+const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate 100 UNIQUE messages.
 
-Guidelines:
-- Each message 2-6 words maximum
-- Mix of greetings, casual reactions, questions, and playful banter
-- Topics: crypto, donut, asking how someone is, random fun comments
-- Use natural Roman Urdu (e.g., 'aur kia ho raha hai', 'kya ho gaya', 'game khel rahe ho?', 'donut time!', 'mazaa aa gaya')
-- Make them feel like real Discord messages, not robotic
-- Vary tone: some excited, some chill, some questioning
-- NO English translations, NO numbering, NO markdown, NO duplicates
+STRICT RULES:
+- Each message 2-6 words ONLY
+- Topics MUST be ONLY these three: machli (fish/fishing/seafood), donut (cravings/eating), crypto (bitcoin/ETH/trading/gains/loss)
+- DO NOT use: "bhai", "legend", "kia kr rahe", "kya ho raha" — these are BANNED words
+- Every single message must mention machli, donut, OR crypto specifically
+- Roman Urdu only, no generic filler messages
+- NO duplicates, NO similar phrases
 
-Return ONLY a valid JSON array of strings, nothing else.
+BAD examples (do NOT generate): "bhai kia kr raha", "kya ho gaya yaar", "bhai legend"
+GOOD examples: "machli fry kar li", "donut khatam ho gaya", "bitcoin phir gira yaar", "ETH khareed li aaj", "machli bazar se lai", "donut mil gaya bhai", "crypto ne duba diya"
+
+Return ONLY a valid JSON array of 100 strings. Nothing else.
 Example: ["arre shukriya", "kya kar rahe ho?", "bhai legend"]`;
 
 async function testGroq() {
