@@ -1,5 +1,12 @@
 import { useState, useCallback } from 'react';
 
+// Filter function to remove messages with banned words
+const isBannedMessage = (msg) => {
+  const bannedWords = ['bhai', 'legend', 'kia', 'kya', ' ho ', 'raha', 'gaya', ' aur', ' kar', 'kehdo', 'kehna', 'hain'];
+  const lowerMsg = String(msg).toLowerCase();
+  return bannedWords.some(word => lowerMsg.includes(word));
+};
+
 export const useGroq = () => {
   const [isFetchingBatch, setIsFetchingBatch] = useState(false);
 
@@ -29,15 +36,21 @@ export const useGroq = () => {
           if (jsonMatch) {
             const parsed = JSON.parse(`[${jsonMatch[1]}]`);
             if (Array.isArray(parsed)) {
-              messagesPool = parsed.map(msg => String(msg).slice(0, 50));
+              messagesPool = parsed
+                .map(msg => String(msg).slice(0, 50))
+                .filter(msg => !isBannedMessage(msg));
             }
           } else {
-            const fallbackMatches = content.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/g);
+            const fallbackMatches = content.
+                .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
+                .filter(msg => !isBannedMessage(msg
             if (fallbackMatches) {
               messagesPool = fallbackMatches.map(m => m.replace(/^"|"$/g, '').slice(0, 50));
             }
           }
         } catch (parseError) {
+              .map(m => m.replace(/^"|"$/g, '').slice(0, 50))
+              .filter(msg => !isBannedMessage(msg
           console.error("Failed to parse JSON, falling back to regex", parseError);
           const fallbackMatches = content.match(/"([^"\\]*(?:\\.[^"\\]*)*)"/g);
           if (fallbackMatches) {
@@ -56,17 +69,26 @@ export const useGroq = () => {
     // If we failed to get at least 20 messages, generate some basic fallbacks so the app doesn't crash
     if (messagesPool.length < 20) {
       const fallbackMessages = [
-        'aur kia ho', 'kaise ho bhai', 'kya kar rahe', 'game khel rahe ho', 'donut time',
-        'mazaa aa gaya', 'acha chal bye', 'arre legend', 'bhai shukriya', 'kya scene hai',
-        'ek minute', 'lagta nahi', 'bilkul sahi', 'billo rani', 'waah bhai',
-        'ghar ja bhai', 'tatti nahi hai', 'jaao na bhai', 'arre beta', 'shukriya bhaisab',
-        'kiya hua', 'kaun sa game', 'donut khao na', 'mast hai yaar', 'kya chalraha',
-        'legend lag gaya', 'arre saab', 'beta kehdo', 'shukriya sardar', 'kaise issue',
-        'bilkul mast', 'kya idea hai', 'arre babu', 'kya kehna', 'arre bosss',
-        'mast bro', 'legend bhai', 'top notch', 'acha babu', 'arre pakka',
-        'khud se kehdo', 'mera pata', 'kya nikla', 'arrey shukriya', 'kya kehenge',
-        'shukriya saab', 'acha shukriya', 'bolna na', 'yar legend', 'shukriya bhai',
-        'beta kehdo', 'bro legend', 'arre saab', 'kya baath', 'pakka bhai'
+        'machli fry kar li', 'donut khatam', 'bitcoin phir gira', 'ETH pump ho gaya', 
+        'machli pakad mil gaya', 'donut craving start', 'crypto hodl karte', 'machli scale kat',
+        'donut glazed lelo', 'bitcoin tumble kar', 'ETH pump kar raha', 'machli fresh lo',
+        'donut hole khao', 'crypto sell mat karo', 'machli tasty likha', 'donut sugar coat',
+        'bitcoin hodl strong', 'ETH moon jaega', 'machli net main', 'donut spread lagao',
+        'crypto pump dekho', 'machli water main', 'donut bite karo', 'ETH rise dekho',
+        'machli pakda tha', 'bitcoin dump hua', 'donut finish kar', 'ETH hold karo',
+        'machli tadka lagao', 'crypto trading chalti', 'donut coffee se', 'bitcoin rise dekho',
+        'machli grill kar', 'ETH rocket jaegi', 'donut missing salty', 'crypto bull chalega',
+        'machli fal lo', 'donut missing sweetness', 'bitcoin chart dekho', 'ETH load kar',
+        'machli fresh main', 'donut time now', 'crypto pump dekha', 'ETH top dekho',
+        'machli cook kar', 'donut missing bite', 'bitcoin pump dekha', 'ETH sell na karo',
+        'machli net se', 'donut finish tasty', 'bitcoin hold rakh', 'ETH sky jaegi',
+        'machli salt add', 'donut glazed missing', 'crypto rise dekha', 'ETH pump dekha',
+        'machli masala dal', 'donut share kar', 'bitcoin top dekha', 'ETH rise tha',
+        'machli oil main', 'donut craving miss', 'crypto bull dekha', 'ETH top tha',
+        'machli spicy kar', 'donut finish quick', 'bitcoin pump strong', 'ETH hold long',
+        'machli perfect fry', 'donut sugar miss', 'bitcoin chart nice', 'ETH rocket dekha',
+        'machli water dal', 'donut hole size', 'crypto hodl power', 'ETH pump power'
+      ];
       ];
       for (let i = messagesPool.length; i < 100; i++) {
         messagesPool.push(fallbackMessages[i % fallbackMessages.length]);

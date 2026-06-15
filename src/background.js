@@ -1,21 +1,26 @@
 /* global chrome */
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate 100 UNIQUE messages.
+const SYSTEM_PROMPT = `You are a casual Discord user chatting in Roman Urdu. Generate EXACTLY 100 unique messages.
 
-STRICT RULES:
-- Each message 2-6 words ONLY
-- Topics MUST be ONLY these three: machli (fish/fishing/seafood), donut (cravings/eating), crypto (bitcoin/ETH/trading/gains/loss)
-- DO NOT use: "bhai", "legend", "kia kr rahe", "kya ho raha" — these are BANNED words
-- Every single message must mention machli, donut, OR crypto specifically
-- Roman Urdu only, no generic filler messages
-- NO duplicates, NO similar phrases
+*** ABSOLUTE RULES (MUST FOLLOW) ***
+1. EVERY message MUST contain ONE of these words: machli, donut, OR crypto (no exceptions)
+2. Each message 2-6 words ONLY
+3. BANNED WORDS - NEVER use these anywhere: bhai, legend, kia, kya, ho, raha, gaya, aur, kar, kehdo, kehna, hain
+4. Use only specific topic vocabulary:
+   - machli: fry, bazar, pakad, khao, khatam, mil, fish, scale, tasty
+   - donut: kha, khatam, chahiye, mil, craving, glazed, hole, sugar
+   - crypto: bitcoin, ETH, phir, gira, pump, dump, hodl, buy, sell, trading, coin, blockchain
+5. Every message different - NO repeats or similar messages
+6. Roman Urdu only - NO English, NO generic filler
 
-BAD examples (do NOT generate): "bhai kia kr raha", "kya ho gaya yaar", "bhai legend"
-GOOD examples: "machli fry kar li", "donut khatam ho gaya", "bitcoin phir gira yaar", "ETH khareed li aaj", "machli bazar se lai", "donut mil gaya bhai", "crypto ne duba diya"
+*** MUST NOT GENERATE ***
+"bhai legend", "kya ho", "kia kr rahe", "legend bhai", "kya ho gaya", "kaise ho bhai", "game khel", "acha chal", "bhai shukriya", "kya scene"
 
-Return ONLY a valid JSON array of 100 strings. Nothing else.
-Example: ["arre machli kha li", "donut chahiye yaar", "crypto upar gaya bhai", "ETH buy kar lo"]`;
+*** GOOD EXAMPLES (follow this style) ***
+"machli fry kar li", "donut khatam", "bitcoin phir gira", "ETH pump ho gaya", "machli pakad mil gaya", "donut craving start", "crypto hodl karte hain", "machli bazar se lo", "donut sugar coat", "bitcoin tumble kar rahi"
+
+Return ONLY a valid JSON array of exactly 100 strings. Nothing else. No numbers, no bullets, no text, just the JSON array.`;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "FETCH_GROQ_BATCH") {
